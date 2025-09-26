@@ -17,5 +17,5 @@ export EPICS_CA_ADDR_LIST=164.54.212.49
 API key:
 
 ```console
-SLACK_BOT_TOKEN=xoxb-fixme-token python3 test.py
+SLACK_BOT_TOKEN=xoxb-fixme-token python3 monitor.py
 ```
