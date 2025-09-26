@@ -10,6 +10,7 @@ client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
 
 oldvalue = 0.0
 
+
 def callback(pvname, value, timestamp, **kwargs):
     global oldvalue
     ts = datetime.datetime.fromtimestamp(timestamp)
@@ -18,7 +19,8 @@ def callback(pvname, value, timestamp, **kwargs):
     oldvalue = value
     try:
         response = client.chat_postMessage(
-            channel="C09H79FD0R4", text=f"Beam current at {ts.strftime("%Y-%m-%d %H:%M:%S")}: {value:.1f}mA"
+            channel="C09H79FD0R4",
+            text=f"Beam current at {ts.strftime("%Y-%m-%d %H:%M:%S")}: {value:.1f}mA",
         )
     except:
         pass
