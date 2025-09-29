@@ -19,7 +19,7 @@ def callback(pvname, value, timestamp, **kwargs):
     oldvalue = value
     try:
         response = client.chat_postMessage(
-            channel="C09H79FD0R4",
+            channel="C09HT6YUVED",
             text=f"Beam current at {ts.strftime("%Y-%m-%d %H:%M:%S")}: {value:.1f}mA",
         )
     except:
