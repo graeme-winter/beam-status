@@ -11,7 +11,7 @@ client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
 oldvalue = 0.0
 
 
-def callback(pvname, value, timestamp, **kwargs):
+def current(pvname, value, timestamp, **kwargs):
     global oldvalue
     ts = datetime.datetime.fromtimestamp(timestamp)
     if abs(value - oldvalue) < 5:
@@ -26,7 +26,7 @@ def callback(pvname, value, timestamp, **kwargs):
         pass
 
 
-epics.camonitor("S-DCCT:CurrentM", callback=callback, monitor_delta=10)
+epics.camonitor("S-DCCT:CurrentM", callback=current, monitor_delta=10)
 
 while 1:
     time.sleep(100)
