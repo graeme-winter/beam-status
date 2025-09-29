@@ -27,7 +27,7 @@ def transmit(message, timestamp):
     try:
         response = client.chat_postMessage(
             channel="C09HT6YUVED",
-            text=message,
+            text=f"{message} ({ts.strftime("%Y-%m-%d %H:%M:%S")})",
         )
     except:
         pass
