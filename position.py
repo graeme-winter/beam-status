@@ -18,6 +18,8 @@ bpm_y = numpy.zeros(shape=(NN,), dtype=numpy.float32)
 n_bpm_x = 0
 n_bpm_y = 0
 old_current = 0
+noisy_x = False
+noisy_y = False
 
 
 def transmit(message, timestamp):
@@ -37,6 +39,7 @@ def current(pvname, value, timestamp, **kwargs):
     if abs(value - old_current) < 5:
         return
     old_current = value
+
     try:
         response = client.chat_postMessage(
             channel="C09HT6YUVED",
@@ -62,8 +65,12 @@ def callback(pvname, value, timestamp, **kwargs):
 
         sd = numpy.sqrt(numpy.var(bpm_x))
 
-        if sd > THRESH:
+        if sd > THRESH and not noisy_x:
             transmit(f"X position unstable in σ: {sd:.1f}", timestamp)
+            noisy_x = True
+        elif sd < THRESH and noisy_x:
+            transmit(f"X position OK in σ: {sd:.1f}", timestamp)
+            noisy_x = False
 
     elif pvname == "S24IDFE-XBPM:P1us:y":
         bpm_y[n_bpm_y % NN] = value
@@ -74,8 +81,12 @@ def callback(pvname, value, timestamp, **kwargs):
 
         sd = numpy.sqrt(numpy.var(bpm_y))
 
-        if sd > THRESH:
+        if sd > THRESH and not noisy_y:
             transmit(f"Y position unstable in σ: {sd:.1f}", timestamp)
+            noisy_y = True
+        elif sd < THRESH and noisy_y:
+            transmit(f"Y position OK in σ: {sd:.1f}", timestamp)
+            noisy_y = False
 
 
 epics.camonitor("S24IDFE-XBPM:P1us:x", callback=callback)
