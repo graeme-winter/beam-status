@@ -50,7 +50,7 @@ def current(pvname, value, timestamp, **kwargs):
 
 
 def callback(pvname, value, timestamp, **kwargs):
-    global bpm_x, bpm_y, n_bpm_x, n_bpm_y, NN
+    global bpm_x, bpm_y, n_bpm_x, n_bpm_y, NN, noisy_x, noisy_y
 
     # ignore BPMs if current < 10mA
     if old_current < 10:
