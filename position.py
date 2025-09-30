@@ -18,8 +18,8 @@ bpm_y = numpy.zeros(shape=(NN,), dtype=numpy.float32)
 n_bpm_x = 0
 n_bpm_y = 0
 old_current = 0
-noisy_x = False
-noisy_y = False
+noisy_x = 0
+noisy_y = 0
 
 
 def transmit(message, timestamp):
@@ -65,12 +65,12 @@ def callback(pvname, value, timestamp, **kwargs):
 
         sd = numpy.sqrt(numpy.var(bpm_x))
 
-        if sd > THRESH and not noisy_x:
-            transmit(f"X position unstable in σ: {sd:.1f}", timestamp)
-            noisy_x = True
-        elif sd < THRESH and noisy_x:
-            transmit(f"X position OK in σ: {sd:.1f}", timestamp)
-            noisy_x = False
+        if sd / THRESH > noisy_x + 1:
+            transmit(f"X position σ increasing: {sd:.1f}", timestamp)
+            noisy_x = int(sd / THRESH)
+        elif sd / THRESH < noisy_x:
+            transmit(f"X position σ decreasing: {sd:.1f}", timestamp)
+            noisy_x = int(sd / THRESH)
 
     elif pvname == "S24IDFE-XBPM:P1us:y":
         bpm_y[n_bpm_y % NN] = value
@@ -81,12 +81,12 @@ def callback(pvname, value, timestamp, **kwargs):
 
         sd = numpy.sqrt(numpy.var(bpm_y))
 
-        if sd > THRESH and not noisy_y:
-            transmit(f"Y position unstable in σ: {sd:.1f}", timestamp)
-            noisy_y = True
-        elif sd < THRESH and noisy_y:
-            transmit(f"Y position OK in σ: {sd:.1f}", timestamp)
-            noisy_y = False
+        if sd / THRESH > noisy_y + 1:
+            transmit(f"Y position σ increasing: {sd:.1f}", timestamp)
+            noisy_y = int(sd / THRESH)
+        elif sd / THRESH < noisy_y:
+            transmit(f"Y position σ decreasing: {sd:.1f}", timestamp)
+            noisy_y = int(sd / THRESH)
 
 
 epics.camonitor("S24IDFE-XBPM:P1us:x", callback=callback)
